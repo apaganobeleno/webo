@@ -42,6 +42,18 @@ func TestRouteGroupNestedDefinition(t *testing.T) {
 	assert.Equal(t, router.Routes[2].Path, "/api/user/{id}/data")
 }
 
+func TestEmptyNameGroup(t *testing.T) {
+	router := Router{}
+
+	router.Group("", func(rg *RouteGroup) {
+		rg.Get("/users", SampleHandler)
+	}).Before(unauthorizedMiddleware)
+
+	assert.Equal(t, len(router.Routes), 1)
+	assert.Equal(t, router.Routes[0].Path, "/users")
+	assert.Equal(t, len(router.Routes[0].BeforeMiddlewares), 1)
+}
+
 func TestRouteGroupDefinitionWithCases(t *testing.T) {
 	router := Router{}
 
