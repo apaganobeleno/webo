@@ -39,36 +39,24 @@ func main(){
 
 func RunAction(c *cli.Context) {
 	setupTmp()
-	copySources()
-	addMain()
-	runMain()
-}
-
-func runMain() {
 	workingDirectory, _ := os.Getwd()
 	folders := strings.Split(workingDirectory, "/")
 	packageName := folders[len(folders)-1]
 	tempFolder := path.Join(".tmp", "src", packageName)
-	mainPath := path.Join(tempFolder, "main.go")
-	execGopath := os.Getenv("GOPATH") + ":" + path.Join(workingDirectory, ".tmp")
 
-	command := exec.Command("go", "run", mainPath)
-	command.Env = []string{"GOPATH=" + execGopath}
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	command.Stdin = os.Stdin
-
-	log.Printf("| App Running")
-	command.Run()
-	command.Wait()
-	log.Printf("| App Finished Running")
+	copySources(tempFolder)
+	addMain(tempFolder, packageName)
+	runMain(tempFolder, packageName)
 }
 
-func copySources() {
+func setupTmp() {
+	cleanupTmp()
+	os.Mkdir(".tmp", 0777)
+	os.Mkdir(".tmp/src", 0777)
+}
+
+func copySources(destFolder string) {
 	workingDirectory, _ := os.Getwd()
-	folders := strings.Split(workingDirectory, "/")
-	packageName := folders[len(folders)-1]
-	tempFolder := path.Join(".tmp", "src", packageName)
 
 	filepath.Walk(workingDirectory, func(strPath string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -80,7 +68,7 @@ func copySources() {
 		}
 
 		newPath := strings.Replace(strPath, workingDirectory, "", 1)
-		newPath = path.Join(tempFolder, newPath)
+		newPath = path.Join(destFolder, newPath)
 
 		if !info.IsDir() {
 			data, _ := ioutil.ReadFile(strPath)
@@ -93,13 +81,8 @@ func copySources() {
 	})
 }
 
-func addMain() {
-	workingDirectory, _ := os.Getwd()
-	folders := strings.Split(workingDirectory, "/")
-	packageName := folders[len(folders)-1]
-
-	tempFolder := path.Join(".tmp", "src", packageName)
-	mainPath := path.Join(tempFolder, "main.go")
+func addMain(destFolder, packageName string) {
+	mainPath := path.Join(destFolder, "main.go")
 	file, _ := os.Create(mainPath)
 	buf := new(bytes.Buffer)
 
@@ -107,10 +90,21 @@ func addMain() {
 	file.WriteString(buf.String())
 }
 
-func setupTmp() {
-	cleanupTmp()
-	os.Mkdir(".tmp", 0777)
-	os.Mkdir(".tmp/src", 0777)
+func runMain(sourceFolder, packageName string) {
+	workingDirectory, _ := os.Getwd()
+	mainPath := path.Join(sourceFolder, "main.go")
+	execGopath := os.Getenv("GOPATH") + ":" + path.Join(workingDirectory, ".tmp")
+
+	command := exec.Command("go", "run", mainPath)
+	command.Env = []string{"GOPATH=" + execGopath}
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	command.Stdin = os.Stdin
+
+	log.Printf("| App Running")
+	command.Run()
+	command.Wait()
+	log.Printf("| App Finished Running")
 }
 
 func cleanupTmp() {
