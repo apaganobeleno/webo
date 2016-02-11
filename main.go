@@ -21,15 +21,13 @@ func main() {
 			Flags:   cmd.InitFlags,
 			Action:  cmd.InitAction,
 		},
+		{
+			Name:    "run",
+			Aliases: []string{"serve", "r", "s"},
+			Usage:   "runs the webo app",
+			Action:  cmd.RunAction,
+		},
 	}
-	// 	{
-	// 		Name:    "serve",
-	// 		Aliases: []string{"s"},
-	// 		Usage:   "runs the webo app",
-	// 		Action: func(c *cli.Context) {
-	// 			log.Println("Starting Webo App")
-	// 		},
-	// 	},
-	// }
+
 	app.Run(os.Args)
 }

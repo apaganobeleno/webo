@@ -18,16 +18,7 @@ func (m *Matcher) Match(rw http.ResponseWriter, req *http.Request, router *Route
 	if route != nil {
 		m.ApplyRouteParameters(req, route)
 		route.Attend(rw, req)
-
-		// middlewares := route.BeforeMiddlewares
-		// middlewares = append(middlewares, handlerMid)
-		//
-		// var next Middleware
-		// if len(middlewares) > 1 {
-		// 	next = middlewares[1]
-		// }
-		//
-		// middlewares[0](rw, req, &next)
+		//TODO: 404
 	}
 }
 

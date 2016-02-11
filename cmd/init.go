@@ -67,6 +67,7 @@ func createSubfolders() {
 	folders := []string{
 		path.Join(projectPath, "handlers"),
 		path.Join(projectPath, "middlewares"),
+		path.Join(projectPath, "config"),
 	}
 
 	for _, folder := range folders {
@@ -83,7 +84,7 @@ func createFiles() {
 	files := map[string]string{
 		path.Join(projectPath, "handlers", "sample.go"):   handlersTemplate,
 		path.Join(projectPath, "middlewares", ".gitkeep"): ".gitkeep",
-		path.Join(projectPath, "routes.go"):               routesTemplate,
+		path.Join(projectPath, "config", "routes.go"):     routesTemplate,
 	}
 
 	for path, content := range files {
@@ -99,16 +100,19 @@ func createFiles() {
 	}
 }
 
-var routesTemplate = `package main
-import "{{.Name}}/handlers"
+var routesTemplate = `package config
+import (
+	"{{.Name}}/handlers"
+	"webo/routing"
+)
 
 //defineRoutes gets called by the generated main.go, please define routes inside it.
-func defineRoutes(r *Router){
+func DefineRoutes(r *routing.Router){
   r.Get("/", handlers.Home)
 }`
 
 var handlersTemplate = `package handlers
-import "http"
+import "net/http"
 //Home renders a Hello message
 func Home(rw http.ResponseWriter, req *http.Request){
   rw.Write([]byte("Hello From Webo!"))

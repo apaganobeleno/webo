@@ -8,11 +8,11 @@ The idea is to create an API development framework for __Golang__ with the follo
     - Route RegExp                                [+]
     - Route Parameters                            [+]
     - Block/Route Middlewares (Before)            [+]
-    - Route REST templates (Resource vs Resources)[]
+    - Handle 404                                  []
 
   - CLI
     - Init command  (Codegen) [+]
-    - Run command   (Codegen) []
+    - Run command   (Codegen) [+]
     - Build command (Codegen) []
 
 #### Principles:
