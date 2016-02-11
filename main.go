@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-	"webo/commands"
+	"webo/cmd"
 
 	"github.com/codegangsta/cli"
 )
@@ -18,8 +18,8 @@ func main() {
 			Name:    "init",
 			Aliases: []string{"i"},
 			Usage:   "creates webo file structure",
-			Flags:   commands.InitFlags,
-			Action:  commands.InitAction,
+			Flags:   cmd.InitFlags,
+			Action:  cmd.InitAction,
 		},
 	}
 	// 	{
