@@ -53,7 +53,7 @@ func TestMatcherWithVariableExp(t *testing.T) {
 	matcher := Matcher{}
 	matcher.Match(rw, req, &router)
 
-	assert.Equal(t, rw.Body.Bytes(), []byte(nil))
+	assert.Equal(t, rw.Body.Bytes(), []byte("Not Found"))
 }
 
 func TestMatcherWithTwoVariableExp(t *testing.T) {
@@ -87,4 +87,20 @@ func TestMatcherParamsInForm(t *testing.T) {
 	matcher.Match(rw, req, &router)
 
 	assert.Equal(t, string(rw.Body.Bytes()), "TonyWWCO")
+}
+
+func TestMatcherSubRoute(t *testing.T) {
+	router := Router{}
+
+	router.Get("/", func(rw http.ResponseWriter, req *http.Request) {
+		rw.Write([]byte("Hola"))
+	})
+
+	req, _ := http.NewRequest("GET", "/ap", strings.NewReader(""))
+	rw := httptest.NewRecorder()
+
+	matcher := Matcher{}
+	matcher.Match(rw, req, &router)
+
+	assert.Equal(t, string(rw.Body.Bytes()), "Not Found")
 }

@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -28,7 +29,11 @@ func NewRoute(routePath string, method string, handler http.HandlerFunc) Route {
 func (r *Route) Matches(req *http.Request) bool {
 	methodMatches := req.Method == r.Method
 	routeMatches := req.URL != nil
-	routeMatches = routeMatches && r.Regexp.Match([]byte(req.URL.RequestURI()))
+
+	log.Println(r.Regexp)
+	log.Println(req.URL.RequestURI())
+
+	routeMatches = routeMatches && r.Regexp.MatchString(req.URL.RequestURI())
 
 	return (methodMatches && routeMatches)
 }
@@ -57,6 +62,7 @@ func buildPattern(routePath string) *regexp.Regexp {
 	replaced = regexp.MustCompile("{([^/]*)}").ReplaceAll([]byte(replaced), []byte("($1)"))
 	replaced = regexp.MustCompile("(\\<[\\w]*\\>)\\)").ReplaceAll([]byte(replaced), []byte("$1.*)"))
 	replaced = []byte(strings.Replace(string(replaced), "?P<>", "", -1))
+	replaced = []byte(string(replaced) + "^")
 
 	return regexp.MustCompile(string(replaced))
 }

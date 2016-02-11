@@ -15,10 +15,12 @@ func (m *Matcher) Match(rw http.ResponseWriter, req *http.Request, router *Route
 		}
 	}
 
-	if route != nil {
+	if route == nil {
+		rw.WriteHeader(404)
+		rw.Write([]byte("Not Found"))
+	} else {
 		m.ApplyRouteParameters(req, route)
 		route.Attend(rw, req)
-		//TODO: 404
 	}
 }
 
