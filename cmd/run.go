@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -25,6 +24,7 @@ import (
 func main(){
   router := routing.Router{}
   config.DefineRoutes(&router)
+	log.Println("| [{{.Package}}] Running")
 
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
     log.Printf("| Serving /%s", r.URL.Path[1:] )
@@ -34,25 +34,30 @@ func main(){
   })
 
   http.ListenAndServe(":8080", nil)
+	defer log.Printf("| {{.Package}} Closing")
 }
 `
 
 func RunAction(c *cli.Context) {
-	setupTmp()
+	tempFolder := os.TempDir()
+	tempFolder = path.Join(tempFolder, ".webo")
+	setupTmp(tempFolder)
+
 	workingDirectory, _ := os.Getwd()
 	folders := strings.Split(workingDirectory, "/")
 	packageName := folders[len(folders)-1]
-	tempFolder := path.Join(".tmp", "src", packageName)
+	packageFolder := path.Join(tempFolder, "src", packageName)
 
-	copySources(tempFolder)
-	addMain(tempFolder, packageName)
+	copySources(packageFolder)
+	addMain(packageFolder, packageName)
 	runMain(tempFolder, packageName)
 }
 
-func setupTmp() {
-	cleanupTmp()
-	os.Mkdir(".tmp", 0777)
-	os.Mkdir(".tmp/src", 0777)
+func setupTmp(tmpFolder string) {
+	cleanupTmp(tmpFolder)
+
+	os.Mkdir(tmpFolder, 0777)
+	os.Mkdir(path.Join(tmpFolder, "src"), 0777)
 }
 
 func copySources(destFolder string) {
@@ -90,10 +95,9 @@ func addMain(destFolder, packageName string) {
 	file.WriteString(buf.String())
 }
 
-func runMain(sourceFolder, packageName string) {
-	workingDirectory, _ := os.Getwd()
-	mainPath := path.Join(sourceFolder, "main.go")
-	execGopath := os.Getenv("GOPATH") + ":" + path.Join(workingDirectory, ".tmp")
+func runMain(tempFolder, packageName string) {
+	mainPath := path.Join(tempFolder, "src", packageName, "main.go")
+	execGopath := os.Getenv("GOPATH") + ":" + path.Join(tempFolder)
 
 	command := exec.Command("go", "run", mainPath)
 	command.Env = []string{"GOPATH=" + execGopath}
@@ -101,16 +105,14 @@ func runMain(sourceFolder, packageName string) {
 	command.Stderr = os.Stderr
 	command.Stdin = os.Stdin
 
-	log.Printf("| App Running")
 	command.Run()
 	command.Wait()
-	log.Printf("| App Finished Running")
 }
 
-func cleanupTmp() {
+func cleanupTmp(tmpFolder string) {
 	var directoryList []string
 
-	filepath.Walk(".tmp", func(strPath string, info os.FileInfo, err error) error {
+	filepath.Walk(tmpFolder, func(strPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
