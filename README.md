@@ -11,7 +11,7 @@ The idea is to create an API development framework for __Golang__ with the follo
     - Route REST templates (Resource vs Resources)[]
 
   - CLI
-    - Init command  (Codegen) []
+    - Init command  (Codegen) [+]
     - Run command   (Codegen) []
     - Build command (Codegen) []
 
