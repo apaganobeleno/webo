@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -29,10 +28,6 @@ func NewRoute(routePath string, method string, handler http.HandlerFunc) Route {
 func (r *Route) Matches(req *http.Request) bool {
 	methodMatches := req.Method == r.Method
 	routeMatches := req.URL != nil
-
-	log.Println(r.Regexp)
-	log.Println(req.URL.RequestURI())
-
 	routeMatches = routeMatches && r.Regexp.MatchString(req.URL.RequestURI())
 
 	return (methodMatches && routeMatches)
