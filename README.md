@@ -1,23 +1,24 @@
 ### WEBO
 
-The idea is to create an simple API web development tool.
+This is a proof-of-concept for a a
 
   - Routing
-    - Route Definition      (GET/POST/PUT/DELETE) [+]
-    - Route Blocks                                [+]
-    - Route RegExp                                [+]
-    - Route Parameters                            [+]
-    - Block/Route Middlewares (Before)            [+]
-    - Handle 404 Gracefuly                        [+]
+    - Route Definition      (GET/POST/PUT/DELETE)
+    - Route Blocks                                
+    - Route RegExp                                
+    - Route Parameters                            
+    - Block/Route Middlewares (Before)            
+    - Handle 404 Gracefuly                        
 
   - Server
-    - Server construct to make main.go simpler    [+]
-    - Serve static files                          []
-    - Port from $PORT                             []
+    - Server construct to make main.go simpler    
+    - Serve static files                          [TODO]
+    - Port from $PORT                             [TODO]
 
   - CLI
-    - Init command     [+]
-    - Generate command []
+    - Init command
+    - Generate middleware file [TODO]
+    - Generate handler file [TODO]
 
 #### Principles:
 
@@ -128,16 +129,13 @@ Note, After handlers happen in random order, and are not chained, that means the
 ##### Init
 To create a Webo project simply run `webo init myproject` inside the parent folder of your project.
 
-##### Run (may disapear)
-As you may notice Webo Project doesn't have a `main.go` file (for now), to run your app, call `webo run` on your project's root folder.
-
-##### Build (may disapear)
-
-[TODO]
+##### Generate middleware file
+##### Generate handler file
 
 #### Upcomming Features
 
-  - Static folders to allow css/js/images responses
+This is a list of the features i would like to add into webo.
+
   - Database connection
   - Routes documentation
   - List routes
