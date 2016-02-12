@@ -1,6 +1,6 @@
 ### WEBO
 
-This is a proof-of-concept for a a
+This is a proof-of-concept for a very small framework for web development with **golang**.
 
   - Routing
     - Route Definition      (GET/POST/PUT/DELETE)
