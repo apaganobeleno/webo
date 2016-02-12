@@ -1,6 +1,6 @@
 ### WEBO
 
-The idea is to create an API development framework for __Golang__ with the following basic features as core:
+The idea is to create an simple API web development tool.
 
   - Routing
     - Route Definition      (GET/POST/PUT/DELETE) [+]
@@ -8,12 +8,16 @@ The idea is to create an API development framework for __Golang__ with the follo
     - Route RegExp                                [+]
     - Route Parameters                            [+]
     - Block/Route Middlewares (Before)            [+]
-    - Handle 404                                  []
+    - Handle 404 Gracefuly                        [+]
+
+  - Server
+    - Server construct to make main.go simpler    [+]
+    - Serve static files                          []
+    - Port from $PORT                             []
 
   - CLI
-    - Init command  (Codegen) [+]
-    - Run command   (Codegen) [+]
-    - Build command (Codegen) []
+    - Init command     [+]
+    - Generate command []
 
 #### Principles:
 
@@ -121,23 +125,25 @@ func defineRoutes(wr webo.Router){
 Note, After handlers happen in random order, and are not chained, that means these will app execute after the route handler.
 
 #### CLI
-##### bootstrap
-##### run
-##### test
-##### build
-##### vendor
+##### Init
+To create a Webo project simply run `webo init myproject` inside the parent folder of your project.
+
+##### Run (may disapear)
+As you may notice Webo Project doesn't have a `main.go` file (for now), to run your app, call `webo run` on your project's root folder.
+
+##### Build (may disapear)
+
+[TODO]
 
 #### Upcomming Features
-  - Routing
-    - Static folders to allow css/js/images responses
-    - Routes documentation
-    -
-  - CLI
-    - List routes
-    - Vendor tooling:
-      - fetch
-      - update
-      - remove
+
+  - Static folders to allow css/js/images responses
+  - Database connection
+  - Routes documentation
+  - List routes
+  - Vendor fetch
+  - Vendor update
+  - Vendor remove
   - After callbacks
   - Testing framework
   - Database Connection support

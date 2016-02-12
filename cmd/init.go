@@ -50,8 +50,6 @@ func createFolder() error {
 		log.Println("| ERROR: Folder already exist.")
 		return errors.New("Folder already exist.")
 	}
-
-	//Create {Path}/{AppName} folder
 	err := os.Mkdir(projectPath, 0777)
 	if err != nil {
 		log.Println("| ERROR: Could not create directory: ", err.Error())
@@ -62,7 +60,6 @@ func createFolder() error {
 }
 
 func createSubfolders() {
-	//Create folders inside {Path}/{AppName}
 	projectPath := path.Join(initParams.DestionationPath, initParams.Name)
 	folders := []string{
 		path.Join(projectPath, "handlers"),
@@ -80,11 +77,11 @@ func createSubfolders() {
 
 func createFiles() {
 	projectPath := path.Join(initParams.DestionationPath, initParams.Name)
-	//Create Files based on templates
 	files := map[string]string{
 		path.Join(projectPath, "handlers", "sample.go"):   handlersTemplate,
 		path.Join(projectPath, "middlewares", ".gitkeep"): ".gitkeep",
 		path.Join(projectPath, "config", "routes.go"):     routesTemplate,
+		path.Join(projectPath, "main.go"):                 mainTemplate,
 	}
 
 	for path, content := range files {
@@ -99,21 +96,3 @@ func createFiles() {
 		file.WriteString(buf.String())
 	}
 }
-
-var routesTemplate = `package config
-import (
-	"{{.Name}}/handlers"
-	"webo/routing"
-)
-
-//defineRoutes gets called by the generated main.go, please define routes inside it.
-func DefineRoutes(r *routing.Router){
-  r.Get("/", handlers.Home)
-}`
-
-var handlersTemplate = `package handlers
-import "net/http"
-//Home renders a Hello message
-func Home(rw http.ResponseWriter, req *http.Request){
-  rw.Write([]byte("Hello From Webo!"))
-}`
