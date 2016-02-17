@@ -57,7 +57,6 @@ func buildPattern(routePath string) *regexp.Regexp {
 	replaced = regexp.MustCompile("{([^/]*)}").ReplaceAll([]byte(replaced), []byte("($1)"))
 	replaced = regexp.MustCompile("(\\<[\\w]*\\>)\\)").ReplaceAll([]byte(replaced), []byte("$1.*)"))
 	replaced = []byte(strings.Replace(string(replaced), "?P<>", "", -1))
-	replaced = []byte(string(replaced) + "^")
-
+	replaced = []byte(string(replaced) + "$")
 	return regexp.MustCompile(string(replaced))
 }
