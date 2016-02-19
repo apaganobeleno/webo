@@ -118,8 +118,9 @@ If you need to serve static files from your app, you can do it by adding:
 ```go
 s.AddStatic("/static_dir", "/path_you_want")
 ```
+And Webo will point that path to the directory specified.
 
-And Webo will serve that path as static directory.
+__Note:__ Ensure your static paths does not colapse with a route path, other wise, route has presedence over the static directory.
 
 #### CLI
 ##### Init
