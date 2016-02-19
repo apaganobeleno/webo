@@ -77,15 +77,15 @@ You define your app routing inside the `routes.go` file, basic routes can be def
 package main
 import (
   "app/handlers"
-  "webo"
+  "github.com/apaganobeleno/webo"
 )
 
 func DefineRoutes(wr *webo.Router){
   wr.Get("/home", handlers.Home);
 
-  wr.Group("/users", function(){
-    wr.Post("/login", handlers.Login);
-    wr.Put("/", handlers.UserUpdate);
+  wr.Group("/users", func( rg *webo.RouteGroup){
+    rg.Post("/login", handlers.Login);
+    rg.Put("/", handlers.UserUpdate);
   })
 }
 ```
@@ -95,15 +95,15 @@ But you can also define more complex routes with `route params` and `route regex
 package main
 import (
   "app/handlers"
-  "webo"
+  "github.com/apaganobeleno/webo"
 )
 
 func defineRoutes(wr *webo.Router){
   wr.Get("/home/", handlers.Home);
 
-  wr.Group("/tweets", function(){
-    wr.Get("/{:id}", handlers.ShowTweet);
-    wr.Get("/{id:[0-9]+}/details", handlers.TweetDetails); //This will only accept integer id's
+  wr.Group("/tweets", func( rg *webo.RouteGroup){
+    rg.Get("/{:id}", handlers.ShowTweet);
+    rg.Get("/{id:[0-9]+}/details", handlers.TweetDetails); //This will only accept integer id's
   })
 }
 ```
@@ -114,7 +114,7 @@ package main
 import (
   "app/middlewares"
   "app/handlers"
-  "webo"
+  "github.com/apaganobeleno/webo"
 )
 
 func defineRoutes(wr webo.Router){
@@ -124,6 +124,16 @@ func defineRoutes(wr webo.Router){
 ```
 
 Note, After handlers happen in random order, and are not chained, that means these will app execute after the route handler.
+
+#### Static files
+
+If you need to serve static files from your app, you can do it by adding:
+
+```go
+s.AddStatic("/static_dir", "/path_you_want")
+```
+
+And Webo will serve that path as static directory.
 
 #### CLI
 ##### Init

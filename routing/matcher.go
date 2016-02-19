@@ -4,8 +4,9 @@ import "net/http"
 
 type Matcher struct{}
 
-//Match runs a route handler for specific request that matches it.
-func (m *Matcher) Match(rw http.ResponseWriter, req *http.Request, router *Router) {
+//Match runs a route handler for specific request that matches it,
+//returns true or false depending if it finds or not the route match.
+func (m *Matcher) Match(rw http.ResponseWriter, req *http.Request, router *Router) bool {
 	var route *Route
 
 	for _, r := range router.Routes {
@@ -16,12 +17,12 @@ func (m *Matcher) Match(rw http.ResponseWriter, req *http.Request, router *Route
 	}
 
 	if route == nil {
-		rw.WriteHeader(404)
-		rw.Write([]byte("Not Found"))
-	} else {
-		m.ApplyRouteParameters(req, route)
-		route.Attend(rw, req)
+		return false
 	}
+
+	m.ApplyRouteParameters(req, route)
+	route.Attend(rw, req)
+	return true
 }
 
 //ApplyRouteParamters adds named parameters into the form after parsing it.

@@ -49,15 +49,20 @@ func (w *Webo) AddStatic(dir, path string) {
 
 func (w *Webo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	log.Printf("| Serving /%s", req.URL.Path[1:])
+	found := w.Matcher.Match(rw, req, w.Router)
 
-	for key, handler := range w.staticHandlers {
-		reqURL := req.URL.RequestURI()
+	if !found {
+		for key, handler := range w.staticHandlers {
+			reqURL := req.URL.RequestURI()
 
-		if strings.HasPrefix(reqURL, key) {
-			handler.ServeHTTP(rw, req)
-			return
+			if strings.HasPrefix(reqURL, key) {
+				handler.ServeHTTP(rw, req)
+				return
+			}
 		}
-	}
 
-	w.Matcher.Match(rw, req, w.Router)
+		//TODO: move this to a separate class/function
+		rw.WriteHeader(404)
+		rw.Write([]byte("Not Found"))
+	}
 }

@@ -60,3 +60,19 @@ func TestStaticCallWithCss(t *testing.T) {
 	responseStr := string(rw.Body.Bytes())
 	assert.Contains(t, responseStr, "body{")
 }
+
+func TestStaticCallWithRoute(t *testing.T) {
+	w := NewServer(func(r *routing.Router) {
+		r.Get("/api_endpoint", func(rw http.ResponseWriter, req *http.Request) {
+			rw.WriteHeader(422)
+		})
+	})
+
+	w.AddStatic("../static", "/")
+
+	rw := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api_endpoint", nil)
+
+	w.ServeHTTP(rw, req)
+	assert.Equal(t, rw.Code, 422)
+}
