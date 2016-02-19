@@ -12,7 +12,7 @@ This is a proof-of-concept for a very small framework for web development with *
 
   - Server
     - Server construct to make main.go simpler    
-    - Serve static files                          [TODO]
+    - Serve static files                          
     - Port from $PORT                             [TODO]
 
   - CLI

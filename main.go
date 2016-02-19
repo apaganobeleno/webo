@@ -2,8 +2,8 @@ package main
 
 import (
 	"os"
-	"webo/cmd"
 
+	"github.com/apaganobeleno/webo/cmd"
 	"github.com/codegangsta/cli"
 )
 

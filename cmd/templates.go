@@ -3,7 +3,7 @@ package cmd
 const mainTemplate = `package main
 import (
   "log"
-  webo "webo/server"
+  webo "github.com/apaganobeleno/webo/server"
   "{{.Name}}/config"
 )
 
@@ -17,7 +17,7 @@ func main(){
 var routesTemplate = `package config
 import (
 	"{{.Name}}/handlers"
-	"webo/routing"
+	"github.com/apaganobeleno/webo/routing"
 )
 
 //defineRoutes gets called by the generated main.go, please define routes inside it.

@@ -4,20 +4,25 @@ import (
 	"log"
 	"net/http"
 	"time"
-	"webo/routing"
+
+	"strings"
+
+	"github.com/apaganobeleno/webo/routing"
 )
 
 type Webo struct {
-	Port    int
-	Server  *http.Server
-	Matcher *routing.Matcher
-	Router  *routing.Router
+	Port           int
+	Server         *http.Server
+	Matcher        *routing.Matcher
+	Router         *routing.Router
+	staticHandlers map[string]http.Handler
 }
 
 func NewServer(routesDefinitionFunction func(r *routing.Router)) *Webo {
 	w := Webo{
-		Router:  &routing.Router{},
-		Matcher: &routing.Matcher{},
+		Router:         &routing.Router{},
+		Matcher:        &routing.Matcher{},
+		staticHandlers: map[string]http.Handler{},
 	}
 
 	routesDefinitionFunction(w.Router)
@@ -37,7 +42,22 @@ func (w *Webo) Start(port string) {
 	log.Fatal(w.Server.ListenAndServe())
 }
 
+func (w *Webo) AddStatic(dir, path string) {
+	fs := http.FileServer(http.Dir(dir))
+	w.staticHandlers[path] = http.StripPrefix(path, fs)
+}
+
 func (w *Webo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	log.Printf("| Serving /%s", req.URL.Path[1:])
+
+	for key, handler := range w.staticHandlers {
+		reqURL := req.URL.RequestURI()
+
+		if strings.HasPrefix(reqURL, key) {
+			handler.ServeHTTP(rw, req)
+			return
+		}
+	}
+
 	w.Matcher.Match(rw, req, w.Router)
 }
