@@ -17,8 +17,8 @@ This is a proof-of-concept for a very small framework for web development with *
 
   - CLI
     - Init command
-    - Generate middleware file [TODO]
-    - Generate handler file [TODO]
+    - Generate middleware file  [TODO]
+    - Generate handler file     [TODO]
 
 #### Principles:
 
@@ -29,16 +29,18 @@ This is a proof-of-concept for a very small framework for web development with *
   - Test as much as possible
 
 
-#### Folder structure:
+#### Folder structure and files:
 
 To make things simpler we propose the following folder structure.
 
   - app_folder
-    * handlers/     // handlers used by the routes
-    * middlewares/  // middlewares used by the routes
-    * vendor/       // vendor libraries folder (GO15VENDOREXPERIMENT)
-    * config.go     // general configuration file (TODO)
-    * routes.go     // route definition file
+    * handlers/         // handlers used by the routes
+    * middlewares/      // middlewares used by the routes
+    * config            // package for configuration files
+      - routes.go       // route definition file
+    * main.go           // where the app starts
+    * vendor/           // vendor libraries folder (GO15VENDOREXPERIMENT)
+
 
 ##### Handlers
 Handlers simply need to meet the `http.HandlerFunc` type which is something like:
@@ -54,22 +56,6 @@ func MyHanlderFunc(rw http.RequestWriter, req *http.Request){
 And are stored inside your app `handlers` folder, but could be anywhere.
 
 ##### Middlewares
-##### Config.go
-
-To define application configuration you can do it by defining these on the `config.go` file:
-
-```go
-package main
-import "webo"
-
-func buildConfig() webo.Config{
-  return webo.Config{
-    //[TODO]
-  }
-}
-```
-
-
 ##### Routes.go
 You define your app routing inside the `routes.go` file, basic routes can be defined like:
 
