@@ -3,6 +3,7 @@ package routing
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"strings"
@@ -30,7 +31,9 @@ func NewServer(routesDefinitionFunction func(r *routing.Router)) *Webo {
 }
 
 func (w *Webo) Start(port string) {
-	log.Printf("| [webo] listening on port " + port)
+	port = portToRun(port)
+	log.Printf("| [webo] listening on port %s", port)
+
 	w.Server = &http.Server{
 		Addr:           ":" + port,
 		Handler:        w,
@@ -49,20 +52,44 @@ func (w *Webo) AddStatic(dir, path string) {
 
 func (w *Webo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	log.Printf("| Serving /%s", req.URL.Path[1:])
-	found := w.Matcher.Match(rw, req, w.Router)
+	defer recoverFromPanic(rw)
+
+	found := w.Matcher.Match(rw, req, w.Router) || w.handleWithStaticFiles(rw, req)
 
 	if !found {
-		for key, handler := range w.staticHandlers {
-			reqURL := req.URL.RequestURI()
-
-			if strings.HasPrefix(reqURL, key) {
-				handler.ServeHTTP(rw, req)
-				return
-			}
-		}
-
-		//TODO: move this to a separate class/function
 		rw.WriteHeader(404)
 		rw.Write([]byte("Not Found"))
+	}
+}
+
+func (w *Webo) handleWithStaticFiles(rw http.ResponseWriter, req *http.Request) bool {
+	for key, handler := range w.staticHandlers {
+		reqURL := req.URL.RequestURI()
+
+		if strings.HasPrefix(reqURL, key) {
+			handler.ServeHTTP(rw, req)
+			return true
+		}
+	}
+
+	return false
+}
+
+func portToRun(input string) string {
+	port := os.Getenv("PORT")
+
+	if port != "" {
+		log.Printf("[webo] Serving from port %s since its specified in $PORT ENV variable.", port)
+		return port
+	}
+
+	return input
+}
+
+func recoverFromPanic(rw http.ResponseWriter) {
+	if err := recover(); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+
+		log.Println("| Error: ", err)
 	}
 }

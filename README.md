@@ -13,7 +13,8 @@ This is a proof-of-concept for a very small framework for web development with *
   - Server
     - Server construct to make main.go simpler    
     - Serve static files                          
-    - Port from $PORT                             [TODO]
+    - Port from $PORT                      
+    - Handle Panic
 
   - CLI
     - Init command
