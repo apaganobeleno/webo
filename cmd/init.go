@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"errors"
+	"go/format"
 	"log"
 	"os"
 	"path"
@@ -93,6 +94,8 @@ func createFiles() {
 
 		buf := new(bytes.Buffer)
 		template.Must(template.New("sample").Parse(content)).Execute(buf, initParams)
-		file.WriteString(buf.String())
+		formatted, err := format.Source(buf.Bytes())
+
+		file.WriteString(string(formatted))
 	}
 }
