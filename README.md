@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/apaganobeleno/webo.svg?style=svg)](https://circleci.com/gh/apaganobeleno/webo)
+
 ### WEBO
 
 This is a proof-of-concept for a very small framework for web development with **golang**.
