@@ -131,6 +131,12 @@ __Note:__ Ensure your static paths does not colapse with a route path, other wis
 To create a Webo project simply run `webo init myproject` inside the parent folder of your project.
 
 ##### Generate middleware file
+To generate a middleware you can use the CLI, it provides a command that helps with this task.
+
+```bash
+$ webo g middleware MyMiddleware
+```
+
 ##### Generate handler file
 To generate a handler you can use the CLI, it provides a command that helps with this task.
 
