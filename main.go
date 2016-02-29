@@ -21,6 +21,18 @@ func main() {
 			Flags:   cmd.InitFlags,
 			Action:  cmd.InitAction,
 		},
+		{
+			Name:    "gen",
+			Aliases: []string{"g"},
+			Usage:   "generates handlers, middlewares and other",
+			Subcommands: []cli.Command{
+				{
+					Name:   "handler",
+					Usage:  "generate new handler",
+					Action: cmd.GenHandlerAction,
+				},
+			},
+		},
 	}
 
 	app.Run(os.Args)

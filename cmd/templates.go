@@ -31,3 +31,11 @@ import "net/http"
 func Home(rw http.ResponseWriter, req *http.Request){
   rw.Write([]byte("Hello From Webo!"))
 }`
+
+var handlerGenTemplate = `package handlers
+import "net/http"
+//{{.Name}}
+func {{.Name}}(rw http.ResponseWriter, req *http.Request){
+  rw.Write([]byte("{{.Name}} Handler"))
+}
+`

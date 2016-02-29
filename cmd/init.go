@@ -1,13 +1,10 @@
 package cmd
 
 import (
-	"bytes"
 	"errors"
-	"go/format"
-	"log"
+	"fmt"
 	"os"
 	"path"
-	"text/template"
 
 	"github.com/codegangsta/cli"
 )
@@ -30,7 +27,7 @@ var InitFlags = []cli.Flag{
 
 var InitAction = func(c *cli.Context) {
 	if len(c.Args()) == 0 {
-		log.Println("| ERROR: Please specify an app name.")
+		fmt.Println("| ERROR: Please specify an app name.")
 		return
 	}
 
@@ -48,12 +45,12 @@ func createFolder() error {
 	projectPath := path.Join(initParams.DestionationPath, initParams.Name)
 
 	if exists, _ := pathExists(projectPath); exists == true {
-		log.Println("| ERROR: Folder already exist.")
+		fmt.Println("| ERROR: Folder already exist.")
 		return errors.New("Folder already exist.")
 	}
 	err := os.Mkdir(projectPath, 0777)
 	if err != nil {
-		log.Println("| ERROR: Could not create directory: ", err.Error())
+		fmt.Println("| ERROR: Could not create directory: ", err.Error())
 		return err
 	}
 
@@ -71,13 +68,14 @@ func createSubfolders() {
 	for _, folder := range folders {
 		err := os.Mkdir(folder, 0777)
 		if err != nil {
-			log.Println("| ERROR: Could not create directory: ", err.Error())
+			fmt.Println("| ERROR: Could not create directory: ", err.Error())
 		}
 	}
 }
 
 func createFiles() {
 	projectPath := path.Join(initParams.DestionationPath, initParams.Name)
+
 	files := map[string]string{
 		path.Join(projectPath, "handlers", "sample.go"):   handlersTemplate,
 		path.Join(projectPath, "middlewares", ".gitkeep"): ".gitkeep",
@@ -87,15 +85,13 @@ func createFiles() {
 
 	for path, content := range files {
 		file, err := os.Create(path)
+
 		if err != nil {
-			log.Println("| ERROR: Could not create file: ", err.Error())
+			fmt.Println("| ERROR: Could not create file: ", err.Error())
 			continue
 		}
 
-		buf := new(bytes.Buffer)
-		template.Must(template.New("sample").Parse(content)).Execute(buf, initParams)
-		formatted, err := format.Source(buf.Bytes())
-
-		file.WriteString(string(formatted))
+		_, data := writeTemplatedFile(content, initParams)
+		file.Write(data)
 	}
 }
