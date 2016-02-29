@@ -39,3 +39,11 @@ func {{.Name}}(rw http.ResponseWriter, req *http.Request){
   rw.Write([]byte("{{.Name}} Handler"))
 }
 `
+
+var middlewareGenTemplate = `package middlewares
+import "net/http"
+//{{.Name}}
+func {{.Name}}(rw http.ResponseWriter, req *http.Request, next http.HandlerFunc){
+  next(rw, req)
+}
+`

@@ -22,7 +22,7 @@ This is a proof-of-concept for a very small framework for web development with *
     - Init command
     - Generate handler file
     - List Routes               [TODO]
-    - Generate middleware file  [TODO]
+    - Generate middleware file
 
 #### Principles:
 
@@ -144,7 +144,6 @@ This is a list of the features i would like to add into webo.
 
   - Database connection
   - Routes documentation
-  - List routes
   - Vendor fetch
   - Vendor update
   - Vendor remove

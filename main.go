@@ -31,6 +31,11 @@ func main() {
 					Usage:  "generate new handler",
 					Action: cmd.GenHandlerAction,
 				},
+				{
+					Name:   "middleware",
+					Usage:  "generate new middleware",
+					Action: cmd.GenMiddlewareAction,
+				},
 			},
 		},
 	}
