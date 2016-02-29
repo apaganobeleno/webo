@@ -20,8 +20,9 @@ This is a proof-of-concept for a very small framework for web development with *
 
   - CLI
     - Init command
+    - Generate handler file
+    - List Routes               [TODO]
     - Generate middleware file  [TODO]
-    - Generate handler file     [TODO]
 
 #### Principles:
 
@@ -131,6 +132,11 @@ To create a Webo project simply run `webo init myproject` inside the parent fold
 
 ##### Generate middleware file
 ##### Generate handler file
+To generate a handler you can use the CLI, it provides a command that helps with this task.
+
+```bash
+$ webo g handler MyHandler
+```
 
 #### Upcomming Features
 
