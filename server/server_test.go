@@ -1,4 +1,4 @@
-package routing
+package server
 
 import (
 	"os"
@@ -13,7 +13,7 @@ import (
 
 func TestStatic(t *testing.T) {
 	w := NewServer(func(r *routing.Router) {})
-	w.AddStatic("/static", "/assets")
+	w.AddStatic("static", "/assets")
 
 	assert.Equal(t, len(w.staticHandlers), 1)
 }
@@ -28,38 +28,22 @@ func TestStaticRepeated(t *testing.T) {
 
 func TestStaticCall(t *testing.T) {
 	w := NewServer(func(r *routing.Router) {})
-	w.AddStatic("../static", "/assets")
+	w.AddStatic("./static", "/assets")
 
-	rw := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/assets/text.txt", nil)
+	cases := map[string]string{
+		"/assets/text.txt":       "Hola Mundo!",
+		"/assets/":               "Wohoo!",
+		"/assets/css/styles.css": "body{",
+	}
 
-	w.ServeHTTP(rw, req)
-	responseStr := string(rw.Body.Bytes())
-	assert.Equal(t, responseStr, "Hola Mundo!\n")
-}
+	for path, expected := range cases {
+		rw := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", path, nil)
+		w.ServeHTTP(rw, req)
 
-func TestStaticCallRootWithHTML(t *testing.T) {
-	w := NewServer(func(r *routing.Router) {})
-	w.AddStatic("../static", "/assets")
-
-	rw := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/assets/", nil)
-
-	w.ServeHTTP(rw, req)
-	responseStr := string(rw.Body.Bytes())
-	assert.Contains(t, responseStr, "Wohoo")
-}
-
-func TestStaticCallWithCss(t *testing.T) {
-	w := NewServer(func(r *routing.Router) {})
-	w.AddStatic("../static", "/assets")
-
-	rw := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/assets/css/styles.css", nil)
-
-	w.ServeHTTP(rw, req)
-	responseStr := string(rw.Body.Bytes())
-	assert.Contains(t, responseStr, "body{")
+		responseStr := string(rw.Body.Bytes())
+		assert.Contains(t, responseStr, expected)
+	}
 }
 
 func TestStaticCallWithRoute(t *testing.T) {
@@ -69,7 +53,7 @@ func TestStaticCallWithRoute(t *testing.T) {
 		})
 	})
 
-	w.AddStatic("../static", "/")
+	w.AddStatic("static", "/")
 
 	rw := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api_endpoint", nil)

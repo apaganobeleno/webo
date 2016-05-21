@@ -1,4 +1,4 @@
-package routing
+package server
 
 import (
 	"log"
@@ -11,6 +11,7 @@ import (
 	"github.com/apaganobeleno/webo/routing"
 )
 
+//Webo is a general struct that holds all the config
 type Webo struct {
 	Port           int
 	Server         *http.Server
@@ -19,6 +20,7 @@ type Webo struct {
 	staticHandlers map[string]http.Handler
 }
 
+//NewServer creates a new instance of the server
 func NewServer(routesDefinitionFunction func(r *routing.Router)) *Webo {
 	w := Webo{
 		Router:         &routing.Router{},
@@ -30,6 +32,7 @@ func NewServer(routesDefinitionFunction func(r *routing.Router)) *Webo {
 	return &w
 }
 
+//Start starts the Server on the passed port
 func (w *Webo) Start(port string) {
 	port = portToRun(port)
 	log.Printf("| [webo] listening on port %s", port)
@@ -45,9 +48,12 @@ func (w *Webo) Start(port string) {
 	log.Fatal(w.Server.ListenAndServe())
 }
 
+//AddStatic adds a static server handler for static files
 func (w *Webo) AddStatic(dir, path string) {
-	fs := http.FileServer(http.Dir(dir))
-	w.staticHandlers[path] = http.StripPrefix(path, fs)
+	w.staticHandlers[path] = StaticHandler{
+		Path:      dir,
+		ServePath: path,
+	}
 }
 
 func (w *Webo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -67,6 +73,7 @@ func (w *Webo) handleWithStaticFiles(rw http.ResponseWriter, req *http.Request) 
 		reqURL := req.URL.RequestURI()
 
 		if strings.HasPrefix(reqURL, key) {
+			log.Println("| found Handler!")
 			handler.ServeHTTP(rw, req)
 			return true
 		}
@@ -89,7 +96,6 @@ func portToRun(input string) string {
 func recoverFromPanic(rw http.ResponseWriter) {
 	if err := recover(); err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
-
 		log.Println("| Error: ", err)
 	}
 }
