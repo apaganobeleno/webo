@@ -60,6 +60,16 @@ func (w *Webo) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	log.Printf("| Serving /%s", req.URL.Path[1:])
 	defer recoverFromPanic(rw)
 
+	//TODO: this should be a separate middleware.
+	if req.Method == "OPTIONS" {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
+		rw.WriteHeader(200)
+
+		rw.Write([]byte("OK"))
+		return
+	}
+
 	found := w.Matcher.Match(rw, req, w.Router) || w.handleWithStaticFiles(rw, req)
 
 	if !found {
